@@ -38,7 +38,18 @@ public class Health : MonoBehaviour
             if(!dead)
             {
                 anim.SetTrigger("die"); //Включаем анимацию смерти
-                GetComponent<PlayerMovement>().enabled = false; //Выключаем скрипт движения игрока после смерти
+
+                //Игрок
+                if(GetComponent<PlayerMovement>() != null)
+                    GetComponent<PlayerMovement>().enabled = false; //Выключаем скрипт движения игрока после смерти
+
+                //Враг
+                if(GetComponentInParent<EnemyPatrol>() != null)
+                    GetComponentInParent<EnemyPatrol>().enabled = false;
+                if(GetComponent<MeleEnemy>() !=null)
+                    GetComponent<MeleEnemy>().enabled = false;
+
+
                 dead = true; //Устанавливаем переменную в состояние игрок умер
             }
         }

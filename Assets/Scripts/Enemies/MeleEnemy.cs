@@ -4,19 +4,28 @@ using UnityEngine;
 
 public class MeleEnemy : MonoBehaviour
 {
+    [Header ("Attack Parameters")]
     [SerializeField] private float attackCooldown; //Перезарядка атаки
     [SerializeField] private float range; //Далность атаки
+    [SerializeField] private float damage; //Урон врага
+
+    [Header ("Collider Parameters")]
     [SerializeField] private float colliderDistance; //Дистанция от колайдера игрока
-    [SerializeField] private int damage; //Урон врага
     [SerializeField] private BoxCollider2D boxCollider2D; //Ссылка на бокс колайдер врага
+
+    [Header ("Player Layer")]
     [SerializeField] private LayerMask playerLayer;  //Маска слоя игрока
     private float cooldownTimer = Mathf.Infinity; //Устанавливаем значение таймера перезарядки в значение точки бесконечности, чтобы враг мог атаковать сразу
     private Animator anim; //Ссылка на аниматор
     private Health playerHealth;
 
+
+    private EnemyPatrol enemyPatrol;
+
     private void Awake() 
     {
         anim = GetComponent<Animator>();
+        enemyPatrol = GetComponentInParent<EnemyPatrol>();
     }
 
     private void Update() 
@@ -33,6 +42,10 @@ public class MeleEnemy : MonoBehaviour
                 anim.SetTrigger("meleAttack");
             }
         }
+
+        //Если враг не видит игрока продолжить патруль, в противном случае атака
+        if(enemyPatrol != null)
+            enemyPatrol.enabled = !PlayerInSight();
     }
 
     //Проверяем видит ли враг игрока
@@ -42,13 +55,14 @@ public class MeleEnemy : MonoBehaviour
         new Vector3(boxCollider2D.bounds.size.x * range, boxCollider2D.bounds.size.y, boxCollider2D.bounds.size.z), 
             0, Vector2.left, 0, playerLayer); //Создаем бокс для поиска игрока
 
-        return hit.collider != null;
 
         //Если игрок в зоне видимости получаем его компонент здоровья
         if(hit.collider !=null)
         {
             playerHealth = hit.transform.GetComponent<Health>(); //Получаем ссылку на компонент здоровья игрока
         }
+
+        return hit.collider != null;
     }
 
     private void OnDrawGizmos() 
