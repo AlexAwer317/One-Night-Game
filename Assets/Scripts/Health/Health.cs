@@ -16,6 +16,9 @@ public class Health : MonoBehaviour
     [SerializeField] private int numberOfflashes; //Сколько вспышек до возвращения в норм состояние
     private SpriteRenderer spriteRend; //ссылка на спрайт рендерер
 
+    [Header ("Components")]
+    [SerializeField] private Behaviour[] components; //Массив компонентов
+
      private void Awake() 
     {
         currentHealth = startHealth; //Приравниваем на старте игры хп к стартовому значению
@@ -40,14 +43,20 @@ public class Health : MonoBehaviour
                 anim.SetTrigger("die"); //Включаем анимацию смерти
 
                 //Игрок
-                if(GetComponent<PlayerMovement>() != null)
+              /*  if(GetComponent<PlayerMovement>() != null)
                     GetComponent<PlayerMovement>().enabled = false; //Выключаем скрипт движения игрока после смерти
 
                 //Враг
                 if(GetComponentInParent<EnemyPatrol>() != null)
                     GetComponentInParent<EnemyPatrol>().enabled = false;
+
                 if(GetComponent<MeleEnemy>() !=null)
-                    GetComponent<MeleEnemy>().enabled = false;
+                    GetComponent<MeleEnemy>().enabled = false;*/
+
+                //Отключение всех компонентов объекта при смерти у всех классов
+                foreach (Behaviour component in components)
+                    component.enabled = false;
+                
 
 
                 dead = true; //Устанавливаем переменную в состояние игрок умер
@@ -72,4 +81,9 @@ public class Health : MonoBehaviour
         }
         Physics2D.IgnoreLayerCollision(8, 9, false); //Игрок прекратил игнорировать столкновения
     }
+    private void Diactivate()
+    {
+        gameObject.SetActive(false);
+    }
 }
+
